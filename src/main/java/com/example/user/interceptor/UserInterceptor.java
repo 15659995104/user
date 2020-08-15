@@ -19,15 +19,7 @@ public class UserInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        InputStream resStream = request.getInputStream();
-        BufferedReader br = new BufferedReader(new InputStreamReader(resStream, "UTF-8"));
-        StringBuffer resBuffer = new StringBuffer();
-        String resTemp = "";
-        while ((resTemp = br.readLine()) != null) {
-            resBuffer.append(resTemp);
-        }
-        String requestString = resBuffer.toString();
-        logger.info(request.getRequestURL()+"请求" + requestString);
+        logger.info(request.getRequestURL()+"请求" );
         return true;
     }
     @Override

@@ -18,3 +18,9 @@ logging:
 
   file:
     name: logs/user.log
+# pagehelper
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql

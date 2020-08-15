@@ -5,14 +5,20 @@ import com.example.user.dto.LoginInfo;
 import com.example.user.dto.UpdateUser;
 import com.example.user.entiy.Accesslog;
 import com.example.user.entiy.User;
+import com.example.user.interceptor.UserInterceptor;
 import com.example.user.service.AccesslogService;
 import com.example.user.service.UserService;
 import com.example.user.utils.FilesUtils;
 import com.example.user.utils.JSONMessageView;
 import com.example.user.utils.MD5;
 import com.example.user.utils.MemberToken;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.apache.shiro.SecurityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.thymeleaf.util.StringUtils;
@@ -20,7 +26,10 @@ import org.thymeleaf.util.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +41,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/")
 public class UserController {
-
+    private static Logger logger = LoggerFactory.getLogger(UserController.class);
     @Autowired
     private UserService userService;
     @Autowired
@@ -43,13 +52,17 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/index")
-    public ModelAndView index(HttpServletRequest request) {
+    public ModelAndView index(HttpServletRequest request,@RequestParam(defaultValue = "1",value = "pageNum") Integer pageNum,
+                              @RequestParam(defaultValue = "5",value = "pageSize") Integer pageSize) {
         ModelAndView modelAndView = new ModelAndView("index");
         User user = (User)request.getSession().getAttribute("user");
         if (user!=null){
             modelAndView.addObject("islogin","Y");
+            PageHelper.startPage(pageNum, pageSize);
             List<Accesslog> accesslogList = accesslogService.getByUserId(user.getId());
-            modelAndView.addObject("accesslogList",accesslogList);
+            PageInfo<Accesslog> pageInfo = new PageInfo<Accesslog>(accesslogList);
+
+            modelAndView.addObject("accesslogList",pageInfo.getList());
         }else{
             modelAndView.addObject("islogin","N");
             modelAndView.addObject("accesslogList",null);
@@ -237,4 +250,21 @@ public class UserController {
         }
         return jsonMessageView;
     }
+
+    /*public String getRequeseParam(HttpServletRequest request) {
+        try {
+            InputStream resStream = request.getInputStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(resStream, "UTF-8"));
+            StringBuffer resBuffer = new StringBuffer();
+            String resTemp = "";
+            while ((resTemp = br.readLine()) != null) {
+                resBuffer.append(resTemp);
+            }
+            String requestString = resBuffer.toString();
+            return requestString;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return  null;
+    }*/
 }
