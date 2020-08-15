@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace = "com.example.user.dao.AccesslogDao">
+    <select id="getByUserId"  parameterType="java.lang.Integer" resultType="com.example.user.entiy.Accesslog" >
+      SELECT id id ,user_id userId,user_name userName,type type,operate_time operateTime FROM t_accesslog where user_id = '${userId}';
+    </select>
+    <insert id="save"  parameterType="com.example.user.entiy.Accesslog" >
+      insert into t_accesslog(id  ,user_id ,user_name ,type ,operate_time) values (#{id},#{userId},#{userName},#{type},#{operateTime});
+    </insert>
+</mapper>

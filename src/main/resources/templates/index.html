@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <script src="/static/js/jquery-1.2.6.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/static/js/jquery-1.6.4.js" type="text/javascript" charset="utf-8"></script>
+    <style>
+        #image{
+            width: 60px;
+            height: 60px;
+        }
+    </style>
+</head>
+<body>
+<div th:switch = "${islogin}" >
+    <div th:case="'Y'"  >
+        用户名：<tr th:text="${user.userName}"></tr>
+        头像：<img th:src="@{${user.imageUrl}}" id="image" >
+        <button id="edit" onclick="edit()">编辑</button>
+        <button id="loginOut" onclick="signOut()">退出</button>
+        <table cellpadding="0" cellspacing="0">
+            <thead>
+            <th>序号</th>
+            <th>用户id</th>
+            <th>用户名</th>
+            <th>类型</th>
+            <th>操作时间</th>
+            </thead>
+            <tbody>
+            <tr th:each="entries,stat:${accesslogList}" th:style="'background-color:'+@{${stat.odd}?'#F2F2F2'}">
+                <td th:text="${stat.count}"></td>
+                <td th:text="${entries['userId']}"></td>
+                <td th:text="${entries['userName']}"></td>
+                <td th:text="${entries['type']}"></td>
+                <td th:text="${entries['operateTime']}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:case="'N'" >
+        <button id="regedit" onclick="regedit()">注册</button>
+        <button id="login" onclick="login()">登录</button>
+    </div>
+</div>
+
+
+</body>
+<script type="text/javascript" charset="utf-8">
+    function regedit() {
+        window.location.href="regedit";
+    }
+    function edit() {
+        window.location.href="update";
+    }
+    function login() {
+        window.location.href="tologin";
+    }
+    function signOut() {
+        $.ajax({
+            type:'post',
+            url:'signOut',
+            async: false,
+            success:function (data) {
+                if (data.code==0) {
+                    window.location.href="tologin";
+                }else{
+                    alert("退出登录失败");
+                }
+            },
+            error:function () {
+                alert("退出登录失败2");
+            }
+        });
+    }
+</script>
+</html>

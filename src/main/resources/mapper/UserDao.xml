@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace = "com.example.user.dao.UserDao">
+    <insert id="addUser"  parameterType="com.example.user.dto.AddUser" >
+      insert into t_user(user_name,pass_word,image_url) values (#{userName},#{passWord},#{imageUrl});
+    </insert>
+    <select id="getByUserName"  parameterType="java.lang.String" resultType="com.example.user.entiy.User" >
+      select id id ,user_name userName ,pass_word passWord ,image_url imageUrl from t_user where user_name = '${userName}';
+    </select>
+    <select id="getById"  parameterType="java.lang.Integer" resultType="com.example.user.entiy.User" >
+      select id id ,user_name userName ,pass_word passWord ,image_url imageUrl from t_user where id = '${id}';
+    </select>
+    <update id="update"  parameterType="com.example.user.entiy.User" >
+      update t_user set pass_word = #{passWord} ,image_url = #{imageUrl} where id = #{id};
+    </update>
+</mapper>

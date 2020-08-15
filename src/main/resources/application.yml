@@ -1,0 +1,20 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    url: jdbc:mysql://joytime-ET:3306/user?useUnicode=true&characterEncoding=UTF-8&useOldAliasMetadataBehavior=true&serverTimezone=GMT%2b8
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+#mybatis配置
+mybatis:
+  typeAliasesPackage: com.example.user.dao
+  mapperLocations: classpath:mapper/*.xml
+  #configLocation: classpath:/mybatis-config.xml
+
+logging:
+  config: classpath:logback-spring.xml
+
+  file:
+    name: logs/user.log

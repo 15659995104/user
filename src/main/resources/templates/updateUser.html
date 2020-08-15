@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>修改</title>
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.js"></script>
+    <style>
+        .fileupload-box
+        {
+            padding: 5px;
+            border: 2px dashed gainsboro;
+            height: 180px;
+            width: 400px;
+            position: relative
+        }
+        .fileupload-box p
+        {
+            margin: 5px 0 0 5px;
+
+        }
+        .img-box{
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            left: 0;
+            right: 0;
+            top: 10px;
+            bottom: 0;
+            margin:auto;
+        }
+        .img-box img{
+            width: 120px;
+            height: 120px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="regedit_form">
+    <!--修改-->
+    <input th:value="${user.id}" type="hidden" id = "userId">
+    <input id ="imageChange" value="N" type="hidden">
+    <ul class="regedit_form_list">
+        <li>
+            用户名：<input th:value="${user.userName}" class="userName" id="userName" name="userName" type="text" disabled/>
+        </li>
+        <li>
+            密码：<input class="passWord" id="passWord" name="passWord" type="text" placeholder="请输入密码"/>
+        </li>
+        <li>
+            确认密码：<input class="rePassWord" id="rePassWord" name="rePassWord" type="text" placeholder="请确认密码"/>
+        </li>
+        <li>
+            用户头像：
+            <div class="fileupload-box">
+                <p>上传图片:</p>
+                <div class="img-box">
+                    <input type="file"  style="display:none" id="uploadfile" accept="image/*"/>
+                    <img th:src="@{${user.imageUrl}}" id="image" >
+                </div>
+            </div>
+
+        </li>
+        <li>
+            <input class="login" type="button" value="确定" onclick="updateSubmit();"/>
+        </li>
+    </ul>
+</div>
+</body>
+<script type="text/javascript" charset="utf-8">
+    $(function(){
+        $("#image").click(function(){
+            $("#uploadfile").click();
+        });
+        $("#uploadfile").change(function(){
+
+            var files=$(this)[0].files[0];    //获取文件信息
+            if(files)
+            {
+                var reader=new FileReader();  //调用FileReader
+                reader.onload=function(evt){   //读取操作完成时触发。
+                    $("#image").attr('src',evt.target.result)  //将img标签的src绑定为DataURL
+                    $("#imageChange").val("Y");
+                };
+                reader.readAsDataURL(files); //将文件读取为 DataURL(base64)
+            }
+            else{
+                alert("上传失败");
+            }
+        });
+    })
+</script>
+<script type="text/javascript" charset="utf-8">
+    function updateSubmit() {
+        var userId = $("#userId").val();
+        var passWord = $("#passWord").val();
+        var rePassWord = $("#rePassWord").val();
+        var image ;
+        if (userId.replace(/(^s*)|(s*$)/g, "").length ==0) {
+            alert("用户Id不能为空");
+            return;
+        }
+        if (passWord.replace(/(^s*)|(s*$)/g, "").length ==0&&rePassWord.replace(/(^s*)|(s*$)/g, "").length ==0){
+
+        } else {
+            if (passWord!=rePassWord) {
+                alert("密码和确认密码要一致");
+                return;
+            }
+        }
+        /*if (passWord.replace(/(^s*)|(s*$)/g, "").length ==0) {
+            alert("密码不能为空");
+            return;
+        }
+        if (rePassWord.replace(/(^s*)|(s*$)/g, "").length ==0) {
+            alert("确认密码不能为空");
+            return;
+        }*/
+        var imageChange = $("#imageChange").val();
+        if (imageChange=="Y"){
+            image = $('#image').attr('src')
+        }
+
+        console.log(image);
+        $.ajax({
+            url : 'updateSubmit',
+            data : {
+                "userId":userId,"passWord":passWord,"imageUrl":image
+            },
+            dataType : "json",
+            type : "POST",
+            async:false,
+            traditional : true,
+            success : function(data) {
+                if(data.code == 0){
+                    window.location.href="index";
+                }else{
+                    alert(data.message);
+                    return;
+                }
+            }
+        });
+    }
+</script>
+</html>

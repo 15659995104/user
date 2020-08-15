@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.js"></script>
+</head>
+<body>
+<ul class="login_form_list">
+    <li>
+        用户名：<input class="userName" id="userName" name="userName" type="text" placeholder="请输入用户名"/>
+    </li>
+    <li>
+        密码：<input class="passWord" id="passWord" name="passWord" type="text" placeholder="请输入密码"/>
+    </li>
+    <li>
+        <input class="login" type="button" value="确定" onclick="loginsubmit();"/>
+    </li>
+</ul>
+</body>
+<script type="text/javascript" charset="utf-8">
+    function loginsubmit() {
+        var userName = $("#userName").val();
+        var passWord = $("#passWord").val();
+        if (userName.replace(/(^s*)|(s*$)/g, "").length ==0) {
+            alert("用户名不能为空");
+            return;
+        }
+        if (passWord.replace(/(^s*)|(s*$)/g, "").length ==0) {
+            alert("密码不能为空");
+            return;
+        }
+        $.ajax({
+            url : 'loginsubmit',
+            data : {
+                "userName":userName,"passWord":passWord
+            },
+            dataType : "json",
+            type : "POST",
+            async:false,
+            traditional : true,
+            success : function(data) {
+                if(data.code == 0){
+                    window.location.href="index";
+                }else{
+                    alert(data.message,false,2000,"${request.contextPath}");
+                    return;
+                }
+            },
+            error: function () {
+                /*错误信息处理*/
+                alert("进入error---");
+            }
+        });
+    }
+</script>
+</html>
